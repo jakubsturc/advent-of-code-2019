@@ -14,7 +14,7 @@ namespace JakubSturc.AdventOfCode2019.Day7
         [InlineData(new[] { 1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50 }, new[] { 3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50 })]
         public void Day2_Samples(int[] initial, int[] final)
         {
-            var interpreter = new ThermalEnvironmentSupervisionTerminal(initial, Enumerable.Empty<int>());
+            var interpreter = new IntComp(initial, Enumerable.Empty<int>());
             _ = interpreter.Run().ToList();
             Assert.Equal(final, initial);
         }
@@ -24,7 +24,7 @@ namespace JakubSturc.AdventOfCode2019.Day7
         [InlineData(new[] { 01102, 33, 3, 4, 0 }, new[] { 01102, 33, 3, 4, 99 })]
         public void Day5_Indirect_Samples(int[] initial, int[] final)
         {
-            var interpreter = new ThermalEnvironmentSupervisionTerminal(initial, Enumerable.Empty<int>());
+            var interpreter = new IntComp(initial, Enumerable.Empty<int>());
             _ = interpreter.Run().ToList();
             Assert.Equal(final, initial);
         }
@@ -34,7 +34,7 @@ namespace JakubSturc.AdventOfCode2019.Day7
         {
             var program = new[] { 3, 1, 99 };
             
-            var interpreter = new ThermalEnvironmentSupervisionTerminal(program, new[] { 42 });
+            var interpreter = new IntComp(program, new[] { 42 });
             _ = interpreter.Run().ToList();
 
             Assert.Equal(new[] { 3, 42, 99 }, program);
@@ -44,7 +44,7 @@ namespace JakubSturc.AdventOfCode2019.Day7
         public void Day5_IO_Write_Samples()
         {
             var program = new[] { 4, 2, 99 };
-            var interpreter = new ThermalEnvironmentSupervisionTerminal(program, Enumerable.Empty<int>());
+            var interpreter = new IntComp(program, Enumerable.Empty<int>());
             var output = interpreter.Run();
             Assert.Equal(new[] { 99 }, output);
         }
@@ -65,7 +65,7 @@ namespace JakubSturc.AdventOfCode2019.Day7
                             999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99 }, new[] { 9 }, new[] { 1001 })]
         public void Day5_PartII_Samples(int[] program, int[] input, int[] expected)
         {
-            var interpreter = new ThermalEnvironmentSupervisionTerminal(program, input);
+            var interpreter = new IntComp(program, input);
             var actual = interpreter.Run();
             Assert.Equal(expected, actual);
         }
