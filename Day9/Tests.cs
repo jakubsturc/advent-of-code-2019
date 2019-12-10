@@ -121,5 +121,14 @@ namespace JakubSturc.AdventOfCode2019.Day9
             var output = interpreter.Run();
             Assert.Equal(1125899906842624, output.First());
         }
+
+        [Fact]
+        public void Day9_PartI_OutOfInitialMemory()
+        {
+            var quine = new long[] { 1001, 1, 0, 1000, 04, 1000, 99 };
+            var interpreter = new IntComp(quine, Enumerable.Empty<long>());
+            var output = interpreter.Run();
+            Assert.Equal(1, output.First());
+        }
     }
 }
