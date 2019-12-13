@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace JakubSturc.AdventOfCode2019.Day12
@@ -15,6 +16,15 @@ namespace JakubSturc.AdventOfCode2019.Day12
             system.Turn(1000);
 
             Console.WriteLine($"Part 1:{system.Energy}");
+
+            system.Reset();
+
+            var sw = Stopwatch.StartNew();
+            var cycle = system.CalculateCycle();
+            sw.Stop();
+            Console.WriteLine($"Part 2:{cycle} in {sw.ElapsedMilliseconds}ms");
+
+
         }
     }
 }

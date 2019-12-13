@@ -20,6 +20,15 @@ namespace JakubSturc.AdventOfCode2019.Day12
             _tmp = new P3[_len];
         }
 
+        public void Reset()
+        {
+            for (int j = 0; j < _len; j++)
+            {
+                _current[j] = _initial[j];
+            }
+            
+        }
+
         public void Turn(int steps)
         {
             for (var i = 0; i < steps; i++)
@@ -37,27 +46,87 @@ namespace JakubSturc.AdventOfCode2019.Day12
             }
         }
 
-        public ulong CalculateCycle()
+        public long CalculateCycle()
         {
-            ulong res = 0;
+            (var cx, var cy, var cz) = CalculateCycles();
+
+            return LCM(LCM(cx, cy), cz);
+
+            static long LCM(long a, long b)
+            {
+                return a / GCD(a, b) * b;
+            }
+
+            static long GCD(long a, long b)
+            {
+                while (a != 0 && b != 0)
+                {
+                    if (a > b)
+                        a %= b;
+                    else
+                        b %= a;
+                }
+
+                return a == 0 ? b : a;
+            }
+        }
+
+        public (long, long, long) CalculateCycles()
+        {
+            long step = 0;
+            long cycleX = -1, cycleY = -1, cycleZ = -1;
+            bool found;
             do
             {
                 Turn(1);
-                res++;
-            } while (!IsInInitialState());
+                step++;
+                found = TestX() && TestY() && TestZ();
 
-            return res;
-        }
+            } while (!found);
 
-        private bool IsInInitialState()
-        {
-            for (int j = 0; j < _len; j++)
+            return (cycleX, cycleY, cycleZ);
+
+            bool TestX()
             {
-                if (_current[j].Position != _initial[j].Position) return false;
-                if (_current[j].Velocity != _initial[j].Velocity) return false;
+                if (cycleX != -1) return true;
+
+                for (int i = 0; i < _len; i++)
+                {
+                    if (_current[i].Velocity.X != _initial[i].Velocity.X) return false;
+                    if (_current[i].Position.X != _initial[i].Position.X) return false;
+                }
+
+                cycleX = step;
+                return true;
             }
 
-            return true;
+            bool TestY()
+            {
+                if (cycleY != -1) return true;
+
+                for (int i = 0; i < _len; i++)
+                {
+                    if (_current[i].Velocity.Y != _initial[i].Velocity.Y) return false;
+                    if (_current[i].Position.Y != _initial[i].Position.Y) return false;
+                }
+
+                cycleY = step;
+                return true;
+            }
+
+            bool TestZ()
+            {
+                if (cycleZ != -1) return true;
+
+                for (int i = 0; i < _len; i++)
+                {
+                    if (_current[i].Velocity.Z != _initial[i].Velocity.Z) return false;
+                    if (_current[i].Position.Z != _initial[i].Position.Z) return false;
+                }
+
+                cycleZ = step;
+                return true;
+            }
         }
 
         public Moon this[int i]

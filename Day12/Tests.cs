@@ -60,7 +60,20 @@ namespace JakubSturc.AdventOfCode2019.Day12
 
             var system = new MoonSystem(a, b, c, d);
             var cycle = system.CalculateCycle();
-            Assert.Equal((ulong)2772, cycle);
+            Assert.Equal(2772L, cycle);
+        }
+
+        [Fact]
+        public void Part2_Example2()
+        {
+            var b = new Moon() { Position = new P3(-8, -10, 0) };
+            var c = new Moon() { Position = new P3(5, 5, 10) };
+            var a = new Moon() { Position = new P3(2, -7, 3) };
+            var d = new Moon() { Position = new P3(9, -8, -3) };
+
+            var system = new MoonSystem(a, b, c, d);
+            var cycle = system.CalculateCycle();
+            Assert.Equal(4686774924L, cycle);
         }
     }
 }
