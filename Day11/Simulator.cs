@@ -15,11 +15,11 @@ namespace JakubSturc.AdventOfCode2019.Day11
         private readonly IView _view;
         private readonly Dictionary<(int x, int y), Color> _hull;
 
-        public Simulator(IRobot? robot = null, IView? view = null)
+        public Simulator(IRobot? robot = null, IView? view = null, Color init = Color.Black)
         {
             _dir = Direction.N;
             _robot = robot ?? new PaintingRobot(GetCamera());
-            _hull = new Dictionary<(int x, int y), Color>() { { (0, 0), Color.Black } };
+            _hull = new Dictionary<(int x, int y), Color>() { { (0, 0), init } };
             _view = view ?? IView.Null;
         }
 

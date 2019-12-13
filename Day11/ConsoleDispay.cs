@@ -14,11 +14,12 @@ namespace JakubSturc.AdventOfCode2019.Day11
             _shiftY = height / 2;
         }
 
-        public static ConsoleView Create(int widht, int height)
+        public static ConsoleView Create()
         {
+            Console.Clear();
             Console.CursorVisible = false;
-            widht = Console.WindowWidth;
-            height = Console.WindowHeight;
+            var widht = Console.WindowWidth;
+            var height = Console.WindowHeight;
             Console.ForegroundColor = ConsoleColor.Gray;
             for (int i = 0; i < height; i++)
             {
@@ -43,6 +44,7 @@ namespace JakubSturc.AdventOfCode2019.Day11
         {
             Console.ForegroundColor = ConsoleColor.Green;
             PutChar(x, y, dir.Code);
+            Thread.Sleep(50);
         }
 
         public void PrintTile(int x, int y, Color color)
