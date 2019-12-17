@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Day13
+namespace JakubSturc.AdventOfCode2019.Day13
 {
     partial class Program
     {

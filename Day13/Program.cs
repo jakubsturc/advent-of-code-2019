@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using JakubSturc.AdventOfCode2019.IntComp;
 
-namespace Day13
+namespace JakubSturc.AdventOfCode2019.Day13
 {
     partial class Program
     {
