@@ -1,6 +1,7 @@
 ﻿using JakubSturc.AdventOfCode2019.IntComp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -18,6 +19,27 @@ namespace JakubSturc.AdventOfCode2019.Day17
             var sum = camera.DetectIntersections().Select(p => p.x * p.y).Sum();
 
             Console.WriteLine($"Part I: {sum}");
+
+            Console.ReadLine();
+            Console.Clear();
+
+
+            while (true)
+            {
+
+                var logic = File.ReadAllText("movementlogic.ascii").Select(c => (long)c).ToArray();
+
+                prog[0] = 2;
+                comp = new Computer(prog, input: logic);
+
+                foreach (char c in comp.Run())
+                {
+                    Console.Write(c);
+                }
+
+                Console.WriteLine("DONE! Press enter to retry");
+                Console.ReadLine();
+            }
         }
     }
 
