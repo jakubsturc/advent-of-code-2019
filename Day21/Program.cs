@@ -3,41 +3,56 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace JakubSturc.AdventOfCode2019.Day21
 {
     class Program
     {
         static void Main(string[] args)
-        {
-            while (true)
+        {   
+            var prog = IntProgram.ParseFrom("input.txt");
+            var comp = new Computer(prog, input: LoadAndWrite());
+
+            foreach (long c in comp.Run())
             {
-                var prog = IntProgram.ParseFrom("input.txt");
-                var comp = new Computer(prog, input: LoadAndWrite());
-
-                foreach (long c in comp.Run())
+                if (c < 256)
                 {
-                    if (c < 256)
-                    {
-                        Console.Write((char)c);
-                    }
-                    else
-                    {
-                        Console.Write(c);
-                    }
+                    Console.Write((char)c);
                 }
-
-                Console.WriteLine("DONE! Press enter to retry");
-                Console.ReadLine();
+                else
+                {
+                    Console.Write(c);
+                }
             }
+
 
             static IEnumerable<long> LoadAndWrite()
             {
-                var logic = File.ReadAllText("springdroid.ascii").Select(c => (long)c).ToArray();
-                foreach (long x in logic)
+                Console.OutputEncoding = Encoding.UTF8;
+
+                var lines = File.ReadAllLines("part1.ascii");
+                foreach (var line in lines)
                 {
-                    Console.Write((char)x);
-                    yield return x;
+                    Console.WriteLine(line);
+
+                    var copy = line;
+                    if (line.Contains('#'))
+                    {
+                        copy = line.Substring(0, line.IndexOf('#'));
+                    }
+
+                    copy = copy.Trim();
+
+                    if (copy.Length > 0)
+                    {
+                        foreach (char c in copy)
+                        {
+                            yield return (long)c;
+                        }
+
+                        yield return 10L;
+                    }
                 }
             }
         }

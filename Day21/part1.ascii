@@ -1,0 +1,8 @@
+NOT A T     # T ← ¬A
+OR T J      # J ← ¬A
+NOT B T     # T ← ¬B
+OR T J      # J ← ¬A ∨ ¬B
+NOT C T     # T ← ¬C
+OR T J      # J ← ¬A ∨ ¬B ∨ ¬C
+AND D J     # J ← (¬A ∨ ¬B ∨ ¬C) ∧ D
+WALK

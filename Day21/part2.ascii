@@ -1,0 +1,9 @@
+OR A T      # T ← A
+AND B T     # T ← A ∧ B
+AND C T     # T ← A ∧ B ∧ C (true iff no hole ahead)
+NOT T J     # J ← ¬ (A ∧ B ∧ C) (false iff no hole ahead, true iff there is a reason for a jump)
+AND D J     # J ← ¬ (A ∧ B ∧ C) ∧ D (we can jump over some hole)
+OR E T      # T ← E (if we jump we will land on D and E is immediately after)
+OR H T      # T ← E ∨ H (true iff we don't have to jump immediately after landing or the next jump is safe)
+AND T J     # J ← ¬ (A ∧ B ∧ C) ∧ D ∧ (E ∨ H) (jump iff there is a reason for a jump and jumping is not leading to deadend)
+RUN
