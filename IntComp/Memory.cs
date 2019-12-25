@@ -1,10 +1,12 @@
 ﻿using System;
-using InnerMemory = System.Collections.Generic.Dictionary<long, long>;
+using System.Collections.Generic;
 
 namespace JakubSturc.AdventOfCode2019.IntComp
 {
     public class Memory
     {
+        public const int PrimaryMemorySize = 64 * 1024; // 64kB must be enought for everyone
+
         public ImmediateMemory Immediate { get; } 
         public PositionMemory Position { get; }
         public RelativeMemory Relative { get; }
@@ -30,7 +32,7 @@ namespace JakubSturc.AdventOfCode2019.IntComp
             }
         }
 
-        public Memory(InnerMemory memory)
+        public Memory(long[] memory)
         {
             Immediate = new ImmediateMemory(memory);
             Position = new PositionMemory(Immediate);
@@ -39,17 +41,41 @@ namespace JakubSturc.AdventOfCode2019.IntComp
 
         public class ImmediateMemory
         {
-            public readonly InnerMemory _memory;
+            public readonly long[] _primary;
+            public readonly Dictionary<long, long> _extended;
 
-            public ImmediateMemory(InnerMemory memory)
+            public ImmediateMemory(long[] initial)
             {
-                _memory = memory;
+                var copy = new long[PrimaryMemorySize];
+                Array.Copy(initial, 0, copy, 0, initial.Length);
+                _primary = copy;
+                _extended = new Dictionary<long, long>();
             }
 
             public long this[long i]
             {
-                get => _memory.TryGetValue(i, out long value) ? value : 0;
-                set => _memory[i] = value;
+                get
+                {
+                    if (i < PrimaryMemorySize)
+                    {
+                        return _primary[i];
+                    }
+                    else
+                    {
+                        return _extended.TryGetValue(i, out long value) ? value : 0;
+                    }
+                }
+                set
+                {
+                    if (i < PrimaryMemorySize)
+                    {
+                        _primary[i] = value;
+                    }
+                    else
+                    {
+                        _extended[i] = value;
+                    }
+                }
             }
         }
 

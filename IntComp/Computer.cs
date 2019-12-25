@@ -38,9 +38,7 @@ namespace JakubSturc.AdventOfCode2019.IntComp
 
         private Memory InitMemory(long[] program)
         {
-            var kvps = program.Select((num, idx) => new KeyValuePair<long, long>(idx, num));
-            var innerMemory = new Dictionary<long, long>(kvps);
-            return new Memory(innerMemory);
+            return new Memory(program);
         }
 
         internal IEnumerable<long> GetMemory(long count)
