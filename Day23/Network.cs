@@ -51,6 +51,16 @@ namespace JakubSturc.AdventOfCode2019.Day23
 
         public bool IsRunning() => _isRunnning;
 
+        public void PrintStat()
+        {
+            for (int i = 0; i < Size; i++)
+            {
+                var comp = _computers[i];
+                var stat = comp.Stat;
+                Console.WriteLine("{0:00}: {1}", i, stat);
+            }
+        }
+
         public void WaitForOutput()
         {
             _hasOutputSingal.WaitOne();

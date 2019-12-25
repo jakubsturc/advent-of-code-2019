@@ -6,26 +6,33 @@ namespace JakubSturc.AdventOfCode2019.Day23
     public class AsyncComputer
     {
         public long Id { get; }
+        public PerfStat Stat { get; }
 
         private readonly Queue<long> _input;
         private readonly Computer _computer;
         private readonly Network _network;
-        private readonly PerfStat _stat = new PerfStat();
+        private readonly Scheduler _scheduler;
 
         private volatile bool _inputQueueIsEmpty;
 
-        public AsyncComputer(long id, long[] program, Network network)
+        public AsyncComputer(long id, long[] program, Network network, Scheduler scheduler)
         {
             Id = id;
+            Stat = new PerfStat();
+
             _input = new Queue<long>();
             _inputQueueIsEmpty = true;
             _network = network;
+            _scheduler = scheduler;            
             _computer = new Computer(program, Read());
+
             _network.Register(this);
         }
 
         public void Run()
         {
+            _scheduler.WaitOne(this);
+
             long cnt = 0;
             var buffer = new long[3];
             foreach (var x in _computer.Run())
@@ -41,6 +48,8 @@ namespace JakubSturc.AdventOfCode2019.Day23
                 {
                     _network.Send(address: buffer[0], x: buffer[1], y: buffer[2]);
                 }
+
+                _scheduler.WaitOne(this);
             }
         }
 
@@ -52,7 +61,7 @@ namespace JakubSturc.AdventOfCode2019.Day23
                 _inputQueueIsEmpty = false;
             }
 
-            _stat.UpdateWrites(by: 1);
+            Stat.Update(_computer.Ticks, allWrites: 1);
         }
 
         public void Write(long x, long y)
@@ -64,13 +73,13 @@ namespace JakubSturc.AdventOfCode2019.Day23
                 _inputQueueIsEmpty = false;
             }
 
-            _stat.UpdateWrites(by: 2);
+            Stat.Update(_computer.Ticks, allWrites: 2);
         }
 
         private IEnumerable<long> Read()
         {
             long res = -1;
-                
+
             // a small optimalization to avoid unnecessary locking.
             // reading/writing bool is atomic operation and the worst case is
             // that we will read one additional -1
@@ -87,34 +96,37 @@ namespace JakubSturc.AdventOfCode2019.Day23
                 }
             }
 
-            _stat.UpdateReads(wasReal: res != -1);
+            if (res == -1)
+            {
+                Stat.Update(_computer.Ticks, realReads: 1);
+                _scheduler.WaitOne(this);
+            }
+            else
+            {
+                Stat.Update(_computer.Ticks, emptyReads: 1);
+            }
 
             yield return res;
         }
 
-        public struct PerfStat
+        public class PerfStat
         {
             public volatile uint AllWrites;
-            public volatile uint AllReads;
             public volatile uint EmptyReads;
             public volatile uint RealReads;
+            public volatile uint Ticks;
 
-            public void UpdateReads(bool wasReal)
+            public void Update(long ticks, uint allWrites = 0, uint emptyReads = 0, uint realReads = 0)
             {
-                AllReads++;
-                if (wasReal)
-                {
-                    RealReads++;
-                }
-                else
-                {
-                    EmptyReads++;
-                }
+                AllWrites += allWrites;
+                EmptyReads += emptyReads;
+                RealReads += realReads;
+                Ticks = (uint)ticks;
             }
 
-            public void UpdateWrites(uint by)
+            public override string ToString()
             {
-                AllWrites += by;
+                return $"Ticks: {Ticks}; Writes: {AllWrites}; Reads:{EmptyReads}/{RealReads}";
             }
         }
     }
