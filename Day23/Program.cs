@@ -42,8 +42,6 @@ namespace JakubSturc.AdventOfCode2019.Day23
 
             private volatile bool _isRunnning = true;
 
-            private volatile int _sleepingCount = 0;
-
             public void Register(AsyncComputer comp)
             {
                 var id = comp.Id;
@@ -87,11 +85,15 @@ namespace JakubSturc.AdventOfCode2019.Day23
             private readonly Queue<long> _input;
             private readonly Computer _computer;
             private readonly Network _network;
+            private readonly PerfStat _stat = new PerfStat();
+
+            private volatile bool _inputQueueIsEmpty;
 
             public AsyncComputer(long id, long[] program, Network network)
             {
                 Id = id;
                 _input = new Queue<long>();
+                _inputQueueIsEmpty = true;
                 _network = network;
                 _computer = new Computer(program, Read());
                 _network.Register(this);
@@ -122,7 +124,10 @@ namespace JakubSturc.AdventOfCode2019.Day23
                 lock (_input)
                 {
                     _input.Enqueue(x);
+                    _inputQueueIsEmpty = false;
                 }
+
+                _stat.UpdateWrites(by: 1);
             }
 
             public void Write(long x, long y)
@@ -131,21 +136,61 @@ namespace JakubSturc.AdventOfCode2019.Day23
                 {
                     _input.Enqueue(x);
                     _input.Enqueue(y);
+                    _inputQueueIsEmpty = false;
                 }
+
+                _stat.UpdateWrites(by: 2);
             }
 
             private IEnumerable<long> Read()
             {
                 long res = -1;
-                lock (_input)
+                
+                // a small optimalization to avoid unnecessary locking.
+                // reading/writing bool is atomic operation and the worst case is
+                // that we will read one additional -1
+                if (!_inputQueueIsEmpty)
                 {
-                    if (_input.Count > 0)
+                    lock (_input)
                     {
-                        res = _input.Dequeue();
+                        if (_input.Count > 0)
+                        {
+                            res = _input.Dequeue();
+                        }
+
+                        _inputQueueIsEmpty = _input.Count == 0;
                     }
                 }
 
+                _stat.UpdateReads(wasReal: res != -1);
+
                 yield return res;
+            }
+
+            public struct PerfStat
+            {
+                public volatile uint AllWrites;
+                public volatile uint AllReads;
+                public volatile uint EmptyReads;
+                public volatile uint RealReads;
+
+                public void UpdateReads(bool wasReal)
+                {
+                    AllReads++;
+                    if (wasReal)
+                    {
+                        RealReads++;
+                    }
+                    else
+                    {
+                        EmptyReads++;
+                    }
+                }
+
+                public void UpdateWrites(uint by)
+                {
+                    AllWrites += by;
+                }
             }
         }
 
