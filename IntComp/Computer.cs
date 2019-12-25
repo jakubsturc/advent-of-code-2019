@@ -9,6 +9,11 @@ namespace JakubSturc.AdventOfCode2019.IntComp
     {
         public IEnumerator<long> Input { get; }
 
+        /// <summary>
+        /// Gets total count of executed instructions
+        /// </summary>
+        public long Ticks { get; private set; } = 0;
+
         public long IP { get; private set; }
 
         public Memory Memory { get; }
@@ -51,14 +56,27 @@ namespace JakubSturc.AdventOfCode2019.IntComp
 
         public IEnumerable<long> Run()
         {
+            foreach ((_, var output) in Walk())
+            {
+                if (output.HasValue)
+                {
+                    yield return output.Value;
+                }
+            }
+        }
+
+        public IEnumerable<(long ticks, long? output)> Walk()
+        {
             while (true)
             {
+                long? output = null;
+
                 switch (OP)
                 {
                     case 01: { Mem3 = Mem1 + Mem2; IP += 4; break; }
                     case 02: { Mem3 = Mem1 * Mem2; IP += 4; break; }
                     case 03: { Input.MoveNext(); Mem1 = Input.Current; IP += 2; break; }
-                    case 04: { yield return Mem1; IP += 2; break; }
+                    case 04: { output = Mem1; IP += 2; break; }
                     case 05: { if (Mem1 != 0) IP = Mem2; else IP += 3; break; }
                     case 06: { if (Mem1 == 0) IP = Mem2; else IP += 3; break; }
                     case 07: { Mem3 = Mem1 < Mem2 ? 1 : 0; IP += 4; break; }
@@ -68,6 +86,8 @@ namespace JakubSturc.AdventOfCode2019.IntComp
 
                     default: throw new NotSupportedException();
                 }
+
+                yield return (++Ticks, output);
             }
         }
     }
