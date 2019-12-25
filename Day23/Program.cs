@@ -12,34 +12,6 @@ namespace JakubSturc.AdventOfCode2019.Day23
 
         static void Main(string[] args)
         {
-            Part1();
-        }
-        
-        static void Debug()
-        {
-            var program = IntProgram.ParseFrom("input.txt");
-            var computer = new Computer(program, DummyInput(0));
-
-            foreach ((var ticks, var output) in computer.Walk())
-            {
-                if (output.HasValue)
-                {
-                    Console.WriteLine($"{ticks};{output.Value}");
-                }
-            }
-
-            IEnumerable<long> DummyInput(int idx)
-            {
-                yield return idx;
-                while (true)
-                {
-                    yield return -1;
-                }
-            }
-        }
-        
-        static void Part1()
-        {
             // Console.WriteLine("Ticks;From;To;X;Y");
             var program = IntProgram.ParseFrom("input.txt");
             var sw = Stopwatch.StartNew();
